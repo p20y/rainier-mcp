@@ -1,0 +1,113 @@
+[project]
+name = "amazon-ads-mcp"
+version = "0.1.17"
+description = "Amazon Ads API MCP Server - Implementation for Amazon Advertising API"
+readme = "README.md"
+requires-python = ">=3.10,<4.0"
+dependencies = [ "fastmcp>=2.14.1", "python-dotenv>=1.2.1", "pydantic>=2.12.5", "pydantic-settings>=2.12.0", "httpx>=0.28.1", "pyjwt>=2.10.1", "cryptography>=41.0.0", "openai>=1.109.1", "PyYAML>=6.0.2",]
+[[project.authors]]
+name = "Amazon Ads API MCP SDK"
+
+[build-system]
+requires = [ "poetry-core",]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [ "black>=25.12.0", "isort>=7.0.0", "mypy>=1.19.1", "pytest>=9.0.2", "pytest-asyncio>=1.3.0", "ruff>=0.14.10",]
+
+[project.license]
+text = "MIT"
+
+[project.scripts]
+amazon-ads-mcp = "amazon_ads_mcp.server.mcp_server:main"
+
+[tool.poetry]
+name = "amazon-ads-mcp"
+version = "0.1.0"
+description = "Amazon Ads API MCP Server - Implementation for Amazon Advertising API"
+authors = [ "Amazon Ads API MCP SDK",]
+readme = "README.md"
+license = "MIT"
+[[tool.poetry.packages]]
+include = "amazon_ads_mcp"
+from = "src"
+
+[[tool.poetry.include]]
+path = "src/amazon_ads_mcp/resources/*.json"
+format = "wheel"
+
+[tool.black]
+line-length = 79
+target-version = [ "py310",]
+include = "\\.pyi?$"
+extend-exclude = "/(\n  # directories\n  \\.eggs\n  | \\.git\n  | \\.hg\n  | \\.mypy_cache\n  | \\.tox\n  | \\.venv\n  | build\n  | dist\n)/\n"
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+line_length = 79
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+[[tool.mypy.overrides]]
+module = "fastmcp.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+ignore_errors = true
+
+[tool.pytest-asyncio]
+asyncio_mode = "auto"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<4.0"
+fastmcp = "^2.14.1"
+python-dotenv = "^1.2.1"
+pydantic = "^2.12.5"
+pydantic-settings = "^2.12.0"
+httpx = ">=0.28.1"
+pyjwt = "^2.10.1"
+cryptography = "^41.0.0"
+openai = "^1.109.1"
+PyYAML = "^6.0.2"
+
+[tool.poetry.scripts]
+amazon-ads-mcp = "amazon_ads_mcp.server.mcp_server:main"
+
+[tool.pytest.ini_options]
+testpaths = [ "tests",]
+addopts = "-v"
+
+[tool.coverage.run]
+source = [ "src/amazon_ads_mcp",]
+omit = [ "*/tests/*", "*/debug/*",]
+
+[tool.coverage.report]
+exclude_lines = [ "pragma: no cover", "def __repr__", "if self.debug:", "if settings.DEBUG", "raise AssertionError", "raise NotImplementedError", "if 0:", "if __name__ == .__main__.:", "class .*\\bProtocol\\):", "@(abc\\.)?abstractmethod",]
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^9.0.2"
+pytest-asyncio = "^1.3.0"
+black = "^25.12.0"
+isort = "^7.0.0"
+ruff = "^0.14.10"
+mypy = "^1.19.1"
+types-pyjwt = "^1.7.1"
+types-python-dotenv = "^1.0.0"

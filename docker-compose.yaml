@@ -1,0 +1,47 @@
+services:
+  amazon-ads-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: amazon-ads-mcp:latest
+    container_name: amazon-ads-mcp
+    env_file:
+      - .env
+    environment:
+      # Server runtime
+      - TRANSPORT=http
+      - HOST=0.0.0.0
+      - PORT=9080
+      - LOG_LEVEL=INFO
+      # Note: This is overridden by .env if AMAZON_AD_API_PACKAGES is set there
+      - AMAZON_AD_API_PACKAGES=profiles,accounts-ads-accounts,exports-snapshots
+      # Token persistence (disabled by default for security)
+      # Set to 'true' to cache refresh tokens across restarts (see docs for security implications)
+      - AMAZON_ADS_TOKEN_PERSIST=false
+      - AMAZON_ADS_CACHE_DIR=/app/.cache/amazon-ads-mcp
+      # Authentication method - REQUIRED for header-based auth!
+      # Set to 'openbridge' when passing credentials via Authorization header from client
+      - AMAZON_ADS_AUTH_METHOD=openbridge
+      # REQUIRED: Enable refresh token middleware to process Authorization headers
+      - REFRESH_TOKEN_ENABLED=true
+      - AUTH_ENABLED=true
+      # Disable JWT validation (OpenBridge handles authentication)
+      - JWT_VALIDATION_ENABLED=false
+
+    ports:
+      - "9080:9080"
+    volumes:
+      # Persist downloaded exports/reports
+      - downloads:/app/data
+      # Persist token cache across container restarts
+      - cache:/app/.cache
+    command: [
+      "python", "-m", "amazon_ads_mcp.server",
+      "--transport", "${TRANSPORT:-http}",
+      "--host", "${HOST:-0.0.0.0}",
+      "--port", "${PORT:-9080}"
+    ]
+ 
+volumes:
+  downloads: {}
+  cache: {}
