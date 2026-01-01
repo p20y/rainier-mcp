@@ -52,6 +52,7 @@ class OAuthTools:
         self.client_id = settings.ad_api_client_id
         self.client_secret = settings.ad_api_client_secret
         self.region = settings.amazon_ads_region
+        self.oauth_scope = settings.oauth_scope
         # Use PORT env var (set at runtime) or settings.mcp_server_port or default to 9080
         import os
 
@@ -76,7 +77,7 @@ class OAuthTools:
         base_auth_url = (
             f"https://www.amazon.com/ap/oa"
             f"?client_id={self.client_id}"
-            f"&scope=cpc_advertising:campaign_management"
+            f"&scope={self.oauth_scope}"
             f"&response_type=code"
             f"&redirect_uri={self.redirect_uri}"
         )

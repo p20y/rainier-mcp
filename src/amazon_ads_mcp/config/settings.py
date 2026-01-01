@@ -157,6 +157,11 @@ class Settings(BaseSettings):
         alias="OAUTH_REDIRECT_URI",
         description="OAuth Redirect URI for web authentication flow",
     )
+    oauth_scope: str = Field(
+        "cpc_advertising:campaign_management",
+        alias="OAUTH_SCOPE",
+        description="OAuth scope for Amazon Ads API authorization",
+    )
 
     # Sampling Configuration (optional, for testing)
     enable_sampling: bool = Field(
