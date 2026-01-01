@@ -53,11 +53,15 @@ class OAuthTools:
         self.client_secret = settings.ad_api_client_secret
         self.region = settings.amazon_ads_region
         self.oauth_scope = settings.oauth_scope
-        # Use PORT env var (set at runtime) or settings.mcp_server_port or default to 9080
+        # Use oauth_redirect_uri from settings if provided, otherwise construct from port
         import os
 
-        port = os.getenv("PORT") or getattr(settings, "mcp_server_port", None) or 9080
-        self.redirect_uri = f"http://localhost:{port}/auth/callback"
+        if settings.oauth_redirect_uri:
+            self.redirect_uri = settings.oauth_redirect_uri
+        else:
+            # Fallback to localhost if not configured
+            port = os.getenv("PORT") or getattr(settings, "mcp_server_port", None) or 9080
+            self.redirect_uri = f"http://localhost:{port}/auth/callback"
 
     async def start_oauth_flow(
         self,

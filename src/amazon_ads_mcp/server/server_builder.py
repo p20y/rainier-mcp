@@ -579,13 +579,19 @@ class ServerBuilder:
                         connect=10.0, read=30.0, write=10.0, pool=10.0
                     )
                     async with httpx.AsyncClient(timeout=timeout) as client:
+                        # Use oauth_redirect_uri from settings if provided, otherwise construct from port
+                        if settings.oauth_redirect_uri:
+                            redirect_uri = settings.oauth_redirect_uri
+                        else:
+                            # Fallback to localhost if not configured
+                            redirect_uri = f"http://localhost:{os.getenv('PORT') or request.url.port or 9080}/auth/callback"
+                        
                         response = await client.post(
                             token_url,
                             data={
                                 "grant_type": "authorization_code",
                                 "code": code,
-                                # Use PORT env var or request port or default
-                                "redirect_uri": f"http://localhost:{os.getenv('PORT') or request.url.port or 9080}/auth/callback",
+                                "redirect_uri": redirect_uri,
                                 "client_id": settings.ad_api_client_id,
                                 "client_secret": settings.ad_api_client_secret,
                             },
